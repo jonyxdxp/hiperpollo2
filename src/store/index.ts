@@ -366,7 +366,7 @@ export const useStore = create<AppState>()(
         return true;
       },
 
-      eliminarSorteo: (sorteoId) => {
+      eliminarSorteo: (sorteoId: string) => {
         const { sorteos } = get();
         const sorteosFiltrados = sorteos.filter(s => s.id !== sorteoId);
         
@@ -376,16 +376,17 @@ export const useStore = create<AppState>()(
         return true;
       },
 
-      obtenerGanadoresPorSorteo: (sorteoId) => {
+      obtenerGanadoresPorSorteo: (sorteoId: string) => {
         const { ganadores } = get();
         return ganadores.filter(g => g.sorteoId === sorteoId);
       },
 
-      obtenerEstadisticasSorteo: (sorteoId) => {
-        const { participaciones } = get();
+      obtenerEstadisticasSorteo: (sorteoId: string) => {
+        const { participaciones, sorteos } = get();
         const participacionesSorteo = participaciones.filter(p => p.sorteoId === sorteoId);
         
         // Calcular participaciones por día
+  // Calcular participaciones por día
         const participacionesPorDia: { fecha: string; cantidad: number }[] = [];
         const participacionesPorFecha = new Map<string, number>();
         
@@ -398,7 +399,7 @@ export const useStore = create<AppState>()(
           participacionesPorDia.push({ fecha, cantidad });
         });
         
-        participacionesPorDia.sort((a, b) => a.fecha.localeCompare(b.fecha));
+        participacionesPorDia.sort((a: { fecha: string; cantidad: number }, b: { fecha: string; cantidad: number }) => a.fecha.localeCompare(b.fecha));
         
         // Calcular participantes únicos
         const participantesUnicos = new Set(participacionesSorteo.map(p => p.userId)).size;
@@ -411,7 +412,7 @@ export const useStore = create<AppState>()(
         // Comparación con sorteos anteriores (simulado)
         const sorteosFinalizados = sorteos.filter(s => s.estado === 'finalizado' && s.id !== sorteoId);
         const promedioAnterior = sorteosFinalizados.length > 0
-          ? sorteosFinalizados.reduce((sum, s) => sum + s.participantes, 0) / sorteosFinalizados.length
+          ? sorteosFinalizados.reduce((sum: number, s: Sorteo) => sum + s.participantes, 0) / sorteosFinalizados.length
           : 0;
         const comparacion = promedioAnterior > 0 
           ? ((participacionesSorteo.length - promedioAnterior) / promedioAnterior) * 100 

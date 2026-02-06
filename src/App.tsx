@@ -37,7 +37,16 @@ type Screen =
 function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('welcome');
   const [selectedSorteo, setSelectedSorteo] = useState<Sorteo | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { isAuthenticated, esAdmin, logout } = useStore();
+
+  // Simular tiempo de carga de la aplicacion
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Verificar si hay sesión iniciada al cargar
   useEffect(() => {
@@ -62,6 +71,30 @@ function App() {
     logout();
     setCurrentScreen('welcome');
   };
+
+  // Pantalla de carga
+  if (isLoading) {
+    return (
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-b from-pollo-amarillo/20 to-pollo-dorado/10">
+        <div className="text-center">
+          <div className="w-32 h-32 mx-auto mb-8 animate-bounce">
+            <img 
+              src="/logo-hiperdelpollo.png" 
+              alt="Hiper del Pollo Logo" 
+              className="w-full h-full object-contain drop-shadow-lg"
+            />
+          </div>
+          <h1 className="text-3xl font-black text-pollo-marron-oscuro mb-2">Hiper del Pollo</h1>
+          <p className="text-pollo-marron/70 text-lg font-medium mb-8">Cargando...</p>
+          <div className="flex justify-center gap-2">
+            <div className="w-3 h-3 bg-pollo-amarillo rounded-full animate-pulse" style={{ animationDelay: '0s' }} />
+            <div className="w-3 h-3 bg-pollo-dorado rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
+            <div className="w-3 h-3 bg-pollo-marron-claro rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Renderizar la pantalla actual
   const renderScreen = () => {
